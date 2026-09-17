@@ -1,21 +1,21 @@
-// ============================================================
-// LOCAL TUITION - FIREBASE APP
-// ============================================================
+// ============================================
+// APE TEACHER - FIREBASE APP
+// ============================================
 
-// Firebase imports
+// Firebase App
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 
-import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-
+// Firebase Authentication
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut,
   onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+} from
+"https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
+// Firebase Firestore
 import {
   getFirestore,
   collection,
@@ -23,41 +23,28 @@ import {
   getDocs,
   query,
   where,
-  orderBy,
-  limit,
-  serverTimestamp,
-  doc,
-  setDoc
-} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+  limit
+} from
+"https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 
-// ============================================================
-// 1. YOUR FIREBASE CONFIG
-// ============================================================
-
-// Firebase Console → Project Settings → Your apps → Web App
-// වලින් මේ values ගන්න.
+// ============================================
+// FIREBASE CONFIG
+// ============================================
 
 const firebaseConfig = {
-
-  apiKey: "YOUR_API_KEY",
-
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-
-  projectId: "YOUR_PROJECT_ID",
-
-  storageBucket: "YOUR_PROJECT.firebasestorage.app",
-
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-
-  appId: "YOUR_APP_ID"
-
+  apiKey: "AIzaSyC8q1b6e1wBXcSoJ7earYUloCZPqHUosKU",
+  authDomain: "ape-teacher.firebaseapp.com",
+  projectId: "ape-teacher",
+  storageBucket: "ape-teacher.firebasestorage.app",
+  messagingSenderId: "592443898913",
+  appId: "1:592443898913:web:3fec4797559cf9557df760"
 };
 
 
-// ============================================================
-// 2. INITIALIZE FIREBASE
-// ============================================================
+// ============================================
+// INITIALIZE FIREBASE
+// ============================================
 
 const app = initializeApp(firebaseConfig);
 
@@ -66,45 +53,214 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 
-// ============================================================
-// 3. AUTH STATE
-// ============================================================
+// ============================================
+// MODAL FUNCTIONS
+// ============================================
 
-let currentUser = null;
+window.openLogin = function () {
+
+  document
+    .getElementById("loginModal")
+    .classList.add("active");
+
+};
 
 
-onAuthStateChanged(auth, user => {
+window.openRegister = function () {
 
-  currentUser = user;
+  document
+    .getElementById("registerModal")
+    .classList.add("active");
 
-  if (user) {
+};
 
-    console.log("Logged in:", user.email);
 
-    showToast("Welcome back!");
+window.closeModals = function () {
 
-  } else {
+  document
+    .getElementById("loginModal")
+    .classList.remove("active");
 
-    console.log("No user logged in");
+  document
+    .getElementById("registerModal")
+    .classList.remove("active");
+
+};
+
+
+window.switchToRegister = function () {
+
+  closeModals();
+
+  openRegister();
+
+};
+
+
+window.switchToLogin = function () {
+
+  closeModals();
+
+  openLogin();
+
+};
+
+
+// ============================================
+// REGISTER USER
+// ============================================
+
+window.registerUser = async function () {
+
+  const name =
+    document
+      .getElementById("registerName")
+      .value
+      .trim();
+
+  const email =
+    document
+      .getElementById("registerEmail")
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById("registerPassword")
+      .value;
+
+  const role =
+    document
+      .getElementById("registerRole")
+      .value;
+
+
+  // Validation
+
+  if (!name || !email || !password) {
+
+    showToast(
+      "Please fill all fields."
+    );
+
+    return;
+  }
+
+
+  if (password.length < 6) {
+
+    showToast(
+      "Password must be at least 6 characters."
+    );
+
+    return;
+  }
+
+
+  try {
+
+    // Create Firebase account
+
+    const userCredential =
+      await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+
+    const user =
+      userCredential.user;
+
+
+    // Save user information
+    // to Firestore
+
+    await addDoc(
+      collection(db, "users"),
+      {
+
+        uid: user.uid,
+
+        name: name,
+
+        email: email,
+
+        role: role,
+
+        createdAt:
+          new Date().toISOString()
+
+      }
+    );
+
+
+    showToast(
+      "Account created successfully!"
+    );
+
+
+    closeModals();
+
+
+    // Clear fields
+
+    document.getElementById(
+      "registerName"
+    ).value = "";
+
+    document.getElementById(
+      "registerEmail"
+    ).value = "";
+
+    document.getElementById(
+      "registerPassword"
+    ).value = "";
+
+
+  } catch (error) {
+
+    console.error(
+      "Registration error:",
+      error
+    );
+
+
+    showToast(
+      getFirebaseError(error.code)
+    );
 
   }
 
-});
+};
 
 
-// ============================================================
-// 4. LOGIN
-// ============================================================
+// ============================================
+// LOGIN USER
+// ============================================
 
-window.loginUser = async function(event) {
-
-  event.preventDefault();
+window.loginUser = async function () {
 
   const email =
-    document.getElementById("loginEmail").value.trim();
+    document
+      .getElementById("loginEmail")
+      .value
+      .trim();
 
   const password =
-    document.getElementById("loginPassword").value;
+    document
+      .getElementById("loginPassword")
+      .value;
+
+
+  if (!email || !password) {
+
+    showToast(
+      "Please enter email and password."
+    );
+
+    return;
+  }
 
 
   try {
@@ -115,259 +271,231 @@ window.loginUser = async function(event) {
       password
     );
 
-    closeModal("loginModal");
 
-    showToast("Login successful!");
+    showToast(
+      "Login successful!"
+    );
+
+
+    closeModals();
+
+
+    document.getElementById(
+      "loginEmail"
+    ).value = "";
+
+    document.getElementById(
+      "loginPassword"
+    ).value = "";
+
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "Login error:",
+      error
+    );
 
-    showToast(getFirebaseError(error));
+
+    showToast(
+      getFirebaseError(error.code)
+    );
 
   }
 
 };
 
 
-// ============================================================
-// 5. REGISTER
-// ============================================================
+// ============================================
+// FIREBASE AUTH STATE
+// ============================================
 
-window.registerUser = async function(event) {
+onAuthStateChanged(
+  auth,
+  user => {
 
-  event.preventDefault();
+    if (user) {
 
-
-  const name =
-    document.getElementById("registerName").value.trim();
-
-  const email =
-    document.getElementById("registerEmail").value.trim();
-
-  const phone =
-    document.getElementById("registerPhone").value.trim();
-
-  const password =
-    document.getElementById("registerPassword").value;
-
-
-  try {
-
-    const result =
-      await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
+      console.log(
+        "Logged in:",
+        user.email
       );
 
+    } else {
 
-    const user = result.user;
+      console.log(
+        "No user logged in"
+      );
 
-
-    // Save user profile in Firestore
-
-    await setDoc(
-      doc(db, "users", user.uid),
-      {
-
-        name: name,
-
-        email: email,
-
-        phone: phone,
-
-        role: "teacher",
-
-        status: "active",
-
-        createdAt: serverTimestamp()
-
-      }
-    );
-
-
-    closeModal("registerModal");
-
-    showToast("Account created successfully!");
-
-  } catch (error) {
-
-    console.error(error);
-
-    showToast(getFirebaseError(error));
+    }
 
   }
-
-};
-
-
-// ============================================================
-// 6. POST ADVERTISEMENT
-// ============================================================
-
-window.submitAd = async function(event) {
-
-  event.preventDefault();
+);
 
 
-  // User must login first
-
-  if (!currentUser) {
-
-    closeModal("postAdModal");
-
-    openLogin();
-
-    showToast("Please login first.");
-
-    return;
-
-  }
-
-
-  const data = {
-
-    title:
-      document.getElementById("adTitle").value.trim(),
-
-    teacherName:
-      document.getElementById("teacherName").value.trim(),
-
-    subject:
-      document.getElementById("adSubject").value,
-
-    grade:
-      document.getElementById("adGrade").value,
-
-    district:
-      document.getElementById("adDistrict").value,
-
-    city:
-      document.getElementById("adCity").value.trim(),
-
-    classType:
-      document.getElementById("classType").value,
-
-    fee:
-      document.getElementById("adFee").value.trim(),
-
-    phone:
-      document.getElementById("adPhone").value.trim(),
-
-    whatsapp:
-      document.getElementById("adWhatsapp").value.trim(),
-
-    description:
-      document.getElementById("adDescription").value.trim(),
-
-    userId:
-      currentUser.uid,
-
-    featured: false,
-
-    status: "pending",
-
-    createdAt:
-      serverTimestamp()
-
-  };
-
-
-  try {
-
-    await addDoc(
-      collection(db, "advertisements"),
-      data
-    );
-
-
-    closeModal("postAdModal");
-
-    document.querySelector("#postAdModal form").reset();
-
-    showToast(
-      "Advertisement submitted for approval!"
-    );
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    showToast(
-      "Could not submit advertisement."
-    );
-
-  }
-
-};
-
-
-// ============================================================
-// 7. LOAD FEATURED ADS
-// ============================================================
+// ============================================
+// LOAD FEATURED ADS
+// ============================================
 
 async function loadFeaturedAds() {
 
   const container =
-    document.getElementById("featuredAds");
+    document.getElementById(
+      "adsContainer"
+    );
+
+
+  if (!container) {
+    return;
+  }
 
 
   try {
 
-    const adsQuery = query(
+    const adsQuery =
+      query(
 
-      collection(db, "advertisements"),
+        collection(
+          db,
+          "advertisements"
+        ),
 
-      where("status", "==", "active"),
+        where(
+          "status",
+          "==",
+          "active"
+        ),
 
-      where("featured", "==", true),
+        where(
+          "featured",
+          "==",
+          true
+        ),
 
-      limit(6)
+        limit(6)
 
-    );
+      );
 
 
     const snapshot =
-      await getDocs(adsQuery);
-
-
-    container.innerHTML = "";
+      await getDocs(
+        adsQuery
+      );
 
 
     if (snapshot.empty) {
 
       container.innerHTML = `
-        <div class="loading">
+
+        <div class="empty">
+
           No featured classes yet.
+
         </div>
+
       `;
 
       return;
-
     }
 
 
-    snapshot.forEach(docSnap => {
+    container.innerHTML = "";
 
-      createAdCard(
-        docSnap.id,
-        docSnap.data(),
-        container
-      );
 
-    });
+    snapshot.forEach(
+      doc => {
+
+        const ad =
+          doc.data();
+
+
+        container.innerHTML += `
+
+          <div
+            class="ad-card"
+            onclick="viewAdvertisement('${doc.id}')"
+          >
+
+            <div class="ad-content">
+
+              <div class="ad-tag">
+
+                ${escapeHTML(
+                  ad.subject ||
+                  "Tuition"
+                )}
+
+              </div>
+
+
+              <h3>
+
+                ${escapeHTML(
+                  ad.title ||
+                  "Tuition Class"
+                )}
+
+              </h3>
+
+
+              <div class="ad-meta">
+
+                👨‍🏫
+                ${escapeHTML(
+                  ad.teacherName ||
+                  "Teacher"
+                )}
+
+              </div>
+
+
+              <div class="ad-meta">
+
+                📍
+                ${escapeHTML(
+                  ad.district ||
+                  "Sri Lanka"
+                )}
+
+              </div>
+
+
+              <div class="ad-meta">
+
+                🎓
+                ${escapeHTML(
+                  ad.grade ||
+                  "All Grades"
+                )}
+
+              </div>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
+    );
 
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "Loading ads error:",
+      error
+    );
+
 
     container.innerHTML = `
-      <div class="loading">
+
+      <div class="empty">
+
         Unable to load classes.
+
       </div>
+
     `;
 
   }
@@ -375,405 +503,276 @@ async function loadFeaturedAds() {
 }
 
 
-// ============================================================
-// 8. CREATE AD CARD
-// ============================================================
+// ============================================
+// VIEW ADVERTISEMENT
+// ============================================
 
-function createAdCard(id, ad, container) {
+window.viewAdvertisement =
+function (id) {
 
-  const card =
-    document.createElement("div");
-
-  card.className = "ad-card";
-
-
-  card.innerHTML = `
-
-    <div class="ad-image">
-
-      <span>📚</span>
-
-      ${
-        ad.featured
-          ? '<div class="featured-tag">⭐ FEATURED</div>'
-          : ''
-      }
-
-    </div>
-
-
-    <div class="ad-content">
-
-      <h3>
-        ${escapeHTML(ad.title || "Tuition Class")}
-      </h3>
-
-
-      <div class="ad-teacher">
-
-        👨‍🏫
-        ${escapeHTML(ad.teacherName || "")}
-
-      </div>
-
-
-      <div class="ad-info">
-
-        <span>📚 ${escapeHTML(ad.subject || "")}</span>
-
-        <span>🎓 ${escapeHTML(ad.grade || "")}</span>
-
-        <span>📍 ${escapeHTML(ad.city || "")}</span>
-
-      </div>
-
-
-      <button
-        class="view-ad"
-        onclick="viewAdvertisement('${id}')">
-
-        View Advertisement →
-
-      </button>
-
-    </div>
-
-  `;
-
-
-  container.appendChild(card);
-
-}
-
-
-// ============================================================
-// 9. SEARCH
-// ============================================================
-
-window.searchAds = async function() {
-
-  const subject =
-    document.getElementById("subjectFilter").value;
-
-  const grade =
-    document.getElementById("gradeFilter").value;
-
-  const district =
-    document.getElementById("districtFilter").value;
-
-
-  let filters = [];
-
-
-  filters.push(
-    where("status", "==", "active")
+  console.log(
+    "Advertisement ID:",
+    id
   );
 
-
-  if (subject) {
-
-    filters.push(
-      where("subject", "==", subject)
-    );
-
-  }
-
-
-  if (grade) {
-
-    filters.push(
-      where("grade", "==", grade)
-    );
-
-  }
-
-
-  if (district) {
-
-    filters.push(
-      where("district", "==", district)
-    );
-
-  }
-
-
-  try {
-
-    const q = query(
-      collection(db, "advertisements"),
-      ...filters,
-      limit(50)
-    );
-
-
-    const snapshot =
-      await getDocs(q);
-
-
-    const container =
-      document.getElementById("featuredAds");
-
-
-    container.innerHTML = "";
-
-
-    if (snapshot.empty) {
-
-      container.innerHTML = `
-        <div class="loading">
-          No classes found for your search.
-        </div>
-      `;
-
-    }
-
-
-    snapshot.forEach(docSnap => {
-
-      createAdCard(
-        docSnap.id,
-        docSnap.data(),
-        container
-      );
-
-    });
-
-
-    document
-      .getElementById("classes")
-      ?.scrollIntoView();
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    showToast(
-      "Search failed. Please try again."
-    );
-
-  }
-
-};
-
-
-// ============================================================
-// 10. SELECT SUBJECT
-// ============================================================
-
-window.selectSubject = function(subject) {
-
-  document.getElementById(
-    "subjectFilter"
-  ).value = subject;
-
-  searchAds();
-
-};
-
-
-// ============================================================
-// 11. VIEW AD
-// ============================================================
-
-window.viewAdvertisement = function(id) {
-
-  // V1 placeholder.
-  // Next step: create professional advertisement details page.
 
   showToast(
-    "Advertisement details page coming next."
+    "Advertisement details coming soon."
   );
 
 };
 
 
-// ============================================================
-// 12. OPEN LOGIN
-// ============================================================
+// ============================================
+// SEARCH
+// ============================================
 
-window.openLogin = function() {
+window.searchTeachers =
+function () {
 
-  closeModal("registerModal");
+  const search =
+    document
+      .getElementById(
+        "searchInput"
+      )
+      .value
+      .trim();
 
-  closeModal("postAdModal");
 
-  document
-    .getElementById("loginModal")
-    .classList.add("show");
+  const district =
+    document
+      .getElementById(
+        "districtFilter"
+      )
+      .value;
+
+
+  console.log(
+    "Search:",
+    search
+  );
+
+
+  console.log(
+    "District:",
+    district
+  );
+
+
+  showToast(
+    "Search system will be connected next."
+  );
 
 };
 
 
-// ============================================================
-// 13. OPEN REGISTER
-// ============================================================
+// ============================================
+// SELECT SUBJECT
+// ============================================
 
-window.openRegister = function() {
+window.selectSubject =
+function (subject) {
 
-  closeModal("loginModal");
-
-  document
-    .getElementById("registerModal")
-    .classList.add("show");
-
-};
-
-
-// ============================================================
-// 14. OPEN POST AD
-// ============================================================
-
-window.openPostAd = function() {
-
-  if (!currentUser) {
-
-    openLogin();
-
-    showToast(
-      "Login required to post an advertisement."
+  const input =
+    document.getElementById(
+      "searchInput"
     );
 
-    return;
+
+  if (input) {
+
+    input.value =
+      subject;
 
   }
 
 
-  document
-    .getElementById("postAdModal")
-    .classList.add("show");
+  const classes =
+    document.getElementById(
+      "classes"
+    );
+
+
+  if (classes) {
+
+    classes.scrollIntoView({
+      behavior: "smooth"
+    });
+
+  }
 
 };
 
 
-// ============================================================
-// 15. CLOSE MODAL
-// ============================================================
+// ============================================
+// LOAD ALL ADS
+// ============================================
 
-window.closeModal = function(id) {
+window.loadAllAds =
+function () {
 
-  document
-    .getElementById(id)
-    .classList.remove("show");
-
-};
-
-
-// ============================================================
-// 16. MOBILE MENU
-// ============================================================
-
-window.toggleMenu = function() {
-
-  showToast("Mobile navigation coming soon.");
+  showToast(
+    "All classes page will be added next."
+  );
 
 };
 
 
-// ============================================================
-// 17. SHOW ALL ADS
-// ============================================================
+// ============================================
+// MOBILE MENU
+// ============================================
 
-window.showAllAds = function() {
+window.toggleMenu =
+function () {
 
-  document
-    .getElementById("subjectFilter")
-    .value = "";
+  const links =
+    document.querySelector(
+      ".nav-links"
+    );
 
-  document
-    .getElementById("gradeFilter")
-    .value = "";
 
-  document
-    .getElementById("districtFilter")
-    .value = "";
+  if (!links) {
+    return;
+  }
 
-  searchAds();
+
+  if (
+    links.style.display ===
+    "flex"
+  ) {
+
+    links.style.display =
+      "none";
+
+  } else {
+
+    links.style.display =
+      "flex";
+
+    links.style.flexDirection =
+      "column";
+
+  }
 
 };
 
 
-// ============================================================
-// 18. TOAST
-// ============================================================
+// ============================================
+// TOAST MESSAGE
+// ============================================
 
-window.showToast = function(message) {
+function showToast(message) {
 
   const toast =
-    document.getElementById("toast");
+    document.getElementById(
+      "toast"
+    );
 
 
-  toast.textContent = message;
-
-  toast.classList.add("show");
-
-
-  setTimeout(() => {
-
-    toast.classList.remove("show");
-
-  }, 3500);
-
-};
-
-
-// ============================================================
-// 19. FIREBASE ERROR TRANSLATION
-// ============================================================
-
-function getFirebaseError(error) {
-
-  switch (error.code) {
-
-    case "auth/invalid-email":
-      return "Invalid email address.";
-
-    case "auth/user-not-found":
-      return "Account not found.";
-
-    case "auth/wrong-password":
-      return "Incorrect password.";
-
-    case "auth/email-already-in-use":
-      return "This email is already registered.";
-
-    case "auth/weak-password":
-      return "Password should contain at least 6 characters.";
-
-    case "auth/invalid-credential":
-      return "Incorrect email or password.";
-
-    default:
-      return "Something went wrong. Please try again.";
-
+  if (!toast) {
+    return;
   }
+
+
+  toast.textContent =
+    message;
+
+
+  toast.style.display =
+    "block";
+
+
+  setTimeout(
+    () => {
+
+      toast.style.display =
+        "none";
+
+    },
+    3000
+  );
 
 }
 
 
-// ============================================================
-// 20. SECURITY - ESCAPE HTML
-// ============================================================
+// ============================================
+// ESCAPE HTML
+// ============================================
 
 function escapeHTML(value) {
 
   return String(value)
 
-    .replaceAll("&", "&amp;")
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
 
-    .replaceAll("<", "&lt;")
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
 
-    .replaceAll(">", "&gt;")
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
 
-    .replaceAll('"', "&quot;")
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
 
-    .replaceAll("'", "&#039;");
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
 
 }
 
 
-// ============================================================
-// 21. INITIAL LOAD
-// ============================================================
+// ============================================
+// FIREBASE ERROR MESSAGES
+// ============================================
+
+function getFirebaseError(code) {
+
+  const errors = {
+
+    "auth/email-already-in-use":
+      "This email is already registered.",
+
+    "auth/invalid-email":
+      "Invalid email address.",
+
+    "auth/weak-password":
+      "Password is too weak.",
+
+    "auth/invalid-credential":
+      "Email or password is incorrect.",
+
+    "auth/user-not-found":
+      "User not found.",
+
+    "auth/wrong-password":
+      "Incorrect password.",
+
+    "auth/too-many-requests":
+      "Too many attempts. Please try again later."
+
+  };
+
+
+  return (
+    errors[code] ||
+    "Something went wrong. Please try again."
+  );
+
+}
+
+
+// ============================================
+// START APPLICATION
+// ============================================
 
 loadFeaturedAds();
