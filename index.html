@@ -4,340 +4,378 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Ape Teacher | Find Your Perfect Teacher</title>
-  <meta name="description" content="Find teachers and tuition classes in Sri Lanka.">
+  <title>Ape Teacher - Find Your Perfect Teacher</title>
+
+  <meta name="description"
+        content="Find tuition teachers and classes across Sri Lanka with Ape Teacher.">
 
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <!-- HEADER -->
+  <!-- ================= HEADER ================= -->
+
   <header class="header">
-    <div class="container nav">
+
+    <div class="container nav-container">
 
       <a href="#" class="logo">
-        <span class="logo-icon">A</span>
-        <span>Ape Teacher</span>
+        <span>Ape</span> Teacher
       </a>
 
-      <nav class="nav-links">
-        <a href="#home">Home</a>
+      <button id="menuBtn" class="menu-btn">
+        ☰
+      </button>
+
+      <nav id="navLinks" class="nav-links">
+
+        <a href="#">Home</a>
+
         <a href="#classes">Classes</a>
+
         <a href="#subjects">Subjects</a>
-        <a href="#how">How It Works</a>
+
+        <a href="#how-it-works">How It Works</a>
+
+        <div class="nav-buttons">
+
+          <button id="loginBtn" class="btn btn-outline">
+            Login
+          </button>
+
+          <button id="registerBtn" class="btn btn-primary">
+            Register
+          </button>
+
+        </div>
+
       </nav>
 
-      <div class="nav-buttons">
-        <button class="btn btn-outline" onclick="openLogin()">Login</button>
-        <button class="btn btn-primary" onclick="openRegister()">Register</button>
-      </div>
-
-      <button class="menu-btn" onclick="toggleMenu()">☰</button>
-
     </div>
+
   </header>
 
 
-  <!-- HERO -->
-  <main>
+  <!-- ================= HERO ================= -->
 
-    <section class="hero" id="home">
+  <section class="hero">
 
-      <div class="hero-content container">
+    <div class="container hero-content">
 
-        <div class="hero-text">
+      <h1>
+        Find the Right
+        <span>Teacher</span>
+        for You
+      </h1>
 
-          <div class="badge">
-            🇱🇰 Sri Lanka's Teacher Finder
-          </div>
+      <p>
+        Find tuition classes and teachers across Sri Lanka.
+      </p>
 
-          <h1>
-            Find the Right
-            <span>Teacher</span>
-            for You
-          </h1>
 
-          <p>
-            Discover tuition teachers and classes around Sri Lanka.
-            Search by subject, grade and location.
-          </p>
+      <div class="search-box">
 
-          <!-- SEARCH -->
-          <div class="search-box">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search subject or teacher..."
+        >
 
-            <input
-              type="text"
-              id="searchInput"
-              placeholder="Search subject or teacher..."
-            >
+        <select id="districtFilter">
 
-            <select id="districtFilter">
-              <option value="">All Districts</option>
-              <option>Colombo</option>
-              <option>Gampaha</option>
-              <option>Kalutara</option>
-              <option>Kandy</option>
-              <option>Galle</option>
-              <option>Matara</option>
-              <option>Kurunegala</option>
-              <option>Jaffna</option>
-            </select>
+          <option value="">All Districts</option>
 
-            <button
-              class="search-btn"
-              onclick="searchTeachers()">
-              Search
-            </button>
+          <option value="Colombo">Colombo</option>
+          <option value="Gampaha">Gampaha</option>
+          <option value="Kalutara">Kalutara</option>
+          <option value="Kandy">Kandy</option>
+          <option value="Galle">Galle</option>
+          <option value="Matara">Matara</option>
+          <option value="Kurunegala">Kurunegala</option>
+          <option value="Jaffna">Jaffna</option>
+          <option value="Anuradhapura">Anuradhapura</option>
+          <option value="Ratnapura">Ratnapura</option>
 
-          </div>
+        </select>
 
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- STATS -->
-    <section class="stats">
-      <div class="container stats-grid">
-
-        <div class="stat">
-          <strong id="teacherCount">0+</strong>
-          <span>Teachers</span>
-        </div>
-
-        <div class="stat">
-          <strong>25</strong>
-          <span>Districts</span>
-        </div>
-
-        <div class="stat">
-          <strong>100+</strong>
-          <span>Subjects</span>
-        </div>
-
-        <div class="stat">
-          <strong>24/7</strong>
-          <span>Available</span>
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- FEATURED CLASSES -->
-    <section class="section" id="classes">
-
-      <div class="container">
-
-        <div class="section-heading">
-
-          <div>
-            <span class="small-title">FEATURED</span>
-            <h2>Popular Tuition Classes</h2>
-          </div>
-
-          <button class="view-all" onclick="loadAllAds()">
-            View All →
-          </button>
-
-        </div>
-
-        <div id="adsContainer" class="ads-grid">
-
-          <div class="loading">
-            Loading classes...
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- SUBJECTS -->
-    <section class="section light" id="subjects">
-
-      <div class="container">
-
-        <div class="section-heading center">
-
-          <div>
-            <span class="small-title">EXPLORE</span>
-            <h2>Find Classes by Subject</h2>
-          </div>
-
-        </div>
-
-        <div class="subjects-grid">
-
-          <button onclick="selectSubject('Mathematics')">
-            <span>📐</span>
-            Mathematics
-          </button>
-
-          <button onclick="selectSubject('Science')">
-            <span>🔬</span>
-            Science
-          </button>
-
-          <button onclick="selectSubject('English')">
-            <span>📖</span>
-            English
-          </button>
-
-          <button onclick="selectSubject('Sinhala')">
-            <span>📚</span>
-            Sinhala
-          </button>
-
-          <button onclick="selectSubject('ICT')">
-            <span>💻</span>
-            ICT
-          </button>
-
-          <button onclick="selectSubject('Physics')">
-            <span>⚛️</span>
-            Physics
-          </button>
-
-          <button onclick="selectSubject('Chemistry')">
-            <span>🧪</span>
-            Chemistry
-          </button>
-
-          <button onclick="selectSubject('Biology')">
-            <span>🧬</span>
-            Biology
-          </button>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- HOW IT WORKS -->
-    <section class="section" id="how">
-
-      <div class="container">
-
-        <div class="section-heading center">
-
-          <div>
-            <span class="small-title">SIMPLE PROCESS</span>
-            <h2>How Ape Teacher Works</h2>
-          </div>
-
-        </div>
-
-        <div class="steps">
-
-          <div class="step">
-            <div class="step-number">01</div>
-            <h3>Search</h3>
-            <p>Search for the subject, grade or teacher you need.</p>
-          </div>
-
-          <div class="step">
-            <div class="step-number">02</div>
-            <h3>Compare</h3>
-            <p>Check teacher details, location and class information.</p>
-          </div>
-
-          <div class="step">
-            <div class="step-number">03</div>
-            <h3>Contact</h3>
-            <p>Contact the teacher directly by phone or WhatsApp.</p>
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- CTA -->
-    <section class="cta">
-
-      <div class="container">
-
-        <h2>Are You a Teacher?</h2>
-
-        <p>
-          Reach more students by advertising your tuition classes.
-        </p>
-
-        <button
-          class="btn btn-white"
-          onclick="openRegister()">
-          Register as a Teacher →
+        <button id="searchBtn" class="btn btn-primary">
+          Search
         </button>
 
       </div>
 
-    </section>
+    </div>
 
-  </main>
+  </section>
 
 
-  <!-- FOOTER -->
-  <footer class="footer">
+  <!-- ================= STATS ================= -->
 
-    <div class="container footer-content">
+  <section class="stats">
+
+    <div class="container stats-grid">
 
       <div>
-        <div class="footer-logo">Ape Teacher</div>
-        <p>Connecting students with teachers across Sri Lanka.</p>
+        <h2>0+</h2>
+        <p>Teachers</p>
       </div>
 
       <div>
-        <h4>Quick Links</h4>
-        <a href="#home">Home</a>
-        <a href="#classes">Classes</a>
-        <a href="#subjects">Subjects</a>
+        <h2>25</h2>
+        <p>Districts</p>
       </div>
 
       <div>
-        <h4>For Teachers</h4>
-        <a href="#" onclick="openRegister()">Register</a>
-        <a href="#" onclick="openLogin()">Login</a>
+        <h2>100+</h2>
+        <p>Subjects</p>
+      </div>
+
+      <div>
+        <h2>24/7</h2>
+        <p>Available</p>
       </div>
 
     </div>
 
-    <div class="copyright">
-      © 2026 Ape Teacher. All Rights Reserved.
+  </section>
+
+
+  <!-- ================= CLASSES ================= -->
+
+  <section id="classes" class="section">
+
+    <div class="container">
+
+      <div class="section-heading">
+
+        <h2>Featured Classes</h2>
+
+        <p>
+          Discover tuition classes from teachers across Sri Lanka.
+        </p>
+
+      </div>
+
+
+      <div id="adsContainer" class="ads-grid">
+
+        <div class="empty">
+          Loading classes...
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================= SUBJECTS ================= -->
+
+  <section id="subjects" class="section subjects-section">
+
+    <div class="container">
+
+      <div class="section-heading">
+
+        <h2>Popular Subjects</h2>
+
+      </div>
+
+
+      <div class="subjects-grid">
+
+        <button class="subject-btn" data-subject="Mathematics">
+          Mathematics
+        </button>
+
+        <button class="subject-btn" data-subject="Science">
+          Science
+        </button>
+
+        <button class="subject-btn" data-subject="English">
+          English
+        </button>
+
+        <button class="subject-btn" data-subject="Sinhala">
+          Sinhala
+        </button>
+
+        <button class="subject-btn" data-subject="ICT">
+          ICT
+        </button>
+
+        <button class="subject-btn" data-subject="Physics">
+          Physics
+        </button>
+
+        <button class="subject-btn" data-subject="Chemistry">
+          Chemistry
+        </button>
+
+        <button class="subject-btn" data-subject="Biology">
+          Biology
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================= HOW IT WORKS ================= -->
+
+  <section id="how-it-works" class="section">
+
+    <div class="container">
+
+      <div class="section-heading">
+
+        <h2>How It Works</h2>
+
+      </div>
+
+
+      <div class="steps-grid">
+
+        <div class="step">
+
+          <div class="step-number">1</div>
+
+          <h3>Search</h3>
+
+          <p>
+            Search for your subject and location.
+          </p>
+
+        </div>
+
+
+        <div class="step">
+
+          <div class="step-number">2</div>
+
+          <h3>Choose</h3>
+
+          <p>
+            Find a teacher and class that suits you.
+          </p>
+
+        </div>
+
+
+        <div class="step">
+
+          <div class="step-number">3</div>
+
+          <h3>Contact</h3>
+
+          <p>
+            Contact the teacher directly.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================= TEACHER CTA ================= -->
+
+  <section class="cta">
+
+    <div class="container">
+
+      <h2>
+        Are You a Teacher?
+      </h2>
+
+      <p>
+        Create your profile and advertise your tuition classes.
+      </p>
+
+      <button id="teacherRegisterBtn" class="btn btn-primary">
+        Register as Teacher
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================= FOOTER ================= -->
+
+  <footer class="footer">
+
+    <div class="container">
+
+      <h3>Ape Teacher</h3>
+
+      <p>
+        Sri Lanka's tuition teacher discovery platform.
+      </p>
+
+      <p>
+        © 2026 Ape Teacher. All rights reserved.
+      </p>
+
     </div>
 
   </footer>
 
 
-  <!-- LOGIN MODAL -->
-  <div class="modal" id="loginModal">
+  <!-- ================= LOGIN MODAL ================= -->
 
-    <div class="modal-box">
+  <div id="loginModal" class="modal">
 
-      <button class="close" onclick="closeModals()">×</button>
+    <div class="modal-content">
 
-      <h2>Welcome Back</h2>
+      <button class="modal-close" data-close>
+        ×
+      </button>
+
+      <h2>Login</h2>
+
       <p>Login to your Ape Teacher account.</p>
 
-      <input id="loginEmail" type="email" placeholder="Email">
-      <input id="loginPassword" type="password" placeholder="Password">
+      <form id="loginForm">
 
-      <button class="btn btn-primary full" onclick="loginUser()">
-        Login
-      </button>
+        <input
+          type="email"
+          id="loginEmail"
+          placeholder="Email address"
+          required
+        >
+
+        <input
+          type="password"
+          id="loginPassword"
+          placeholder="Password"
+          required
+        >
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+        >
+          Login
+        </button>
+
+      </form>
 
       <p class="modal-switch">
+
         Don't have an account?
-        <button onclick="switchToRegister()">Register</button>
+
+        <button id="switchRegister">
+          Register
+        </button>
+
       </p>
 
     </div>
@@ -345,49 +383,88 @@
   </div>
 
 
-  <!-- REGISTER MODAL -->
-  <div class="modal" id="registerModal">
+  <!-- ================= REGISTER MODAL ================= -->
 
-    <div class="modal-box">
+  <div id="registerModal" class="modal">
 
-      <button class="close" onclick="closeModals()">×</button>
+    <div class="modal-content">
+
+      <button class="modal-close" data-close>
+        ×
+      </button>
 
       <h2>Create Account</h2>
-      <p>Join Ape Teacher today.</p>
 
-      <input id="registerName" type="text" placeholder="Full Name">
+      <p>Create your Ape Teacher account.</p>
 
-      <input id="registerEmail" type="email" placeholder="Email">
+      <form id="registerForm">
 
-      <input id="registerPassword" type="password" placeholder="Password">
+        <input
+          type="text"
+          id="registerName"
+          placeholder="Full name"
+          required
+        >
 
-      <select id="registerRole">
+        <input
+          type="email"
+          id="registerEmail"
+          placeholder="Email address"
+          required
+        >
 
-        <option value="teacher">Teacher</option>
-        <option value="student">Student / Parent</option>
+        <input
+          type="password"
+          id="registerPassword"
+          placeholder="Password (minimum 6 characters)"
+          minlength="6"
+          required
+        >
 
-      </select>
+        <select id="registerRole" required>
 
-      <button
-        class="btn btn-primary full"
-        onclick="registerUser()">
-        Create Account
-      </button>
+          <option value="student">
+            Student / Parent
+          </option>
+
+          <option value="teacher">
+            Teacher
+          </option>
+
+        </select>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+        >
+          Create Account
+        </button>
+
+      </form>
 
       <p class="modal-switch">
+
         Already have an account?
-        <button onclick="switchToLogin()">Login</button>
+
+        <button id="switchLogin">
+          Login
+        </button>
+
       </p>
 
     </div>
 
   </div>
 
+
+  <!-- ================= TOAST ================= -->
 
   <div id="toast" class="toast"></div>
 
 
+  <!-- ================= FIREBASE APP ================= -->
+
   <script type="module" src="app.js"></script>
 
 </body>
-                     </html>
+        </html>
